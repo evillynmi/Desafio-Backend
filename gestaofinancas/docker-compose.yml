@@ -1,0 +1,20 @@
+version: '3'
+services:
+  app:
+    # Define o nome do serviço
+    container_name: gestaofinancas
+    # Define o caminho para o Dockerfile
+    build: .
+    # Mapeia a porta da aplicação no contêiner para a porta do host
+    ports:
+      - "8080:8080"
+    # Define o volume para montar o diretório do código-fonte dentro do contêiner
+    volumes:
+      - .:/app
+    # Define a rede a ser usada
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
