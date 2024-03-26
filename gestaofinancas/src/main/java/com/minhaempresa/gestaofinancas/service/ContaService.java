@@ -38,20 +38,17 @@ public class ContaService {
     }
 
     public Conta atualizarConta(Long id, ContaDTO contaDTO) {
-        // Verificar se a conta com o ID fornecido existe no banco de dados
         Optional<Conta> optionalConta = contaRepository.findById(id);
         if (optionalConta.isPresent()) {
             Conta contaExistente = optionalConta.get();
-            // Atualizar os campos da conta com base nos dados recebidos
             contaExistente.setDataVencimento(contaDTO.getDataVencimento());
             contaExistente.setDataPagamento(contaDTO.getDataPagamento());
             contaExistente.setValor(contaDTO.getValor());
             contaExistente.setDescricao(contaDTO.getDescricao());
             contaExistente.setSituacao(contaDTO.getSituacao());
-            // Salvar a conta atualizada no banco de dados
             return contaRepository.save(contaExistente);
         }
-        return null; // Se a conta não existir, retorne null ou trate de acordo com sua lógica
+        return null;
     }
 
     public Conta alterarSituacaoConta(Long id, SituacaoConta situacao) {
@@ -67,13 +64,10 @@ public class ContaService {
         return null;
     }
 
-    // Método para obter uma lista de contas com filtro de data de vencimento e
-    // descrição
     public List<Conta> obterContasPorFiltro(String dataVencimento, String descricao) {
         return contaRepository.findByDataVencimentoAndDescricao(dataVencimento, descricao);
     }
 
-    // Método para obter uma conta pelo ID
     public Conta obterContaPorId(Long id) {
         return contaRepository.findById(id).orElse(null);
     }
@@ -81,10 +75,8 @@ public class ContaService {
     public BigDecimal obterValorTotalPagoPorPeriodo(LocalDate dataInicio, LocalDate dataFim) {
         BigDecimal valorTotalPago = BigDecimal.ZERO;
 
-        // Consulta as contas pagas dentro do período especificado
         List<Conta> contasPagas = contaRepository.findByDataPagamentoBetween(dataInicio, dataFim);
 
-        // Soma os valores das contas pagas
         for (Conta conta : contasPagas) {
             valorTotalPago = valorTotalPago.add(conta.getValor());
         }
@@ -97,16 +89,13 @@ public class ContaService {
             String linha;
             while ((linha = reader.readLine()) != null) {
                 String[] dadosConta = linha.split(",");
-                // Extrair os dados da linha
-                LocalDate dataVencimento = LocalDate.parse(dadosConta[0]); // Supondo que a data esteja na primeira
-                                                                           // coluna
-                LocalDate dataPagamento = LocalDate.parse(dadosConta[1]); // Supondo que a data esteja na segunda coluna
-                BigDecimal valor = new BigDecimal(dadosConta[2]); // Supondo que o valor esteja na terceira coluna
-                String descricao = dadosConta[3]; // Supondo que a descrição esteja na quarta coluna
-                SituacaoConta situacao = SituacaoConta.valueOf(dadosConta[4]); // Supondo que a situação esteja na
-                                                                               // quinta coluna
 
-                // Criar uma nova instância de Conta
+                LocalDate dataVencimento = LocalDate.parse(dadosConta[0]);
+                LocalDate dataPagamento = LocalDate.parse(dadosConta[1]);
+                BigDecimal valor = new BigDecimal(dadosConta[2]);
+                String descricao = dadosConta[3];
+                SituacaoConta situacao = SituacaoConta.valueOf(dadosConta[4]);
+
                 Conta conta = new Conta();
                 conta.setDataVencimento(dataVencimento);
                 conta.setDataPagamento(dataPagamento);
@@ -114,12 +103,11 @@ public class ContaService {
                 conta.setDescricao(descricao);
                 conta.setSituacao(situacao);
 
-                // Salvar a conta no banco de dados
                 contaRepository.save(conta);
             }
         } catch (IOException e) {
             e.printStackTrace();
-            // Tratar exceção conforme necessário
+
         }
     }
 }
