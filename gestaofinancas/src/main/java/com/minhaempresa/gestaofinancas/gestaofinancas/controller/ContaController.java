@@ -36,7 +36,7 @@ public class ContaController {
         this.contaService = contaService;
     }
 
-    @PostMapping
+    @PostMapping("/cadastrar")
     public ResponseEntity<Conta> cadastrarConta(@RequestBody ContaDTO conta) {
         Conta novaConta = contaService.cadastrarConta(conta);
         return ResponseEntity.status(HttpStatus.CREATED).body(novaConta);
@@ -61,7 +61,7 @@ public class ContaController {
         return ResponseEntity.notFound().build();
     }
 
-    @GetMapping
+    @GetMapping("/lista")
     public Page<Conta> getContas(Pageable pageable) {
         return contaService.getContas(pageable);
     }
