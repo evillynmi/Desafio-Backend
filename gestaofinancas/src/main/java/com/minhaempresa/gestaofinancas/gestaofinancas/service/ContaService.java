@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import com.minhaempresa.gestaofinancas.gestaofinancas.exception.ContaNaoEncontradaException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -47,8 +48,10 @@ public class ContaService {
             contaExistente.setDescricao(contaDTO.getDescricao());
             contaExistente.setSituacao(contaDTO.getSituacao());
             return contaRepository.save(contaExistente);
+
+        } else {
+            throw new ContaNaoEncontradaException("Conta não encontrada com o ID: " + id);
         }
-        return null;
     }
 
     public Conta alterarSituacaoConta(Long id, SituacaoConta situacao) {
@@ -58,10 +61,8 @@ public class ContaService {
             conta.setSituacao(situacao);
             return contaRepository.save(conta);
         } else {
-            // throw new ContaNaoEncontradaException("Conta não encontrada com o ID: " +
-            // id);
+             throw new ContaNaoEncontradaException("Conta não encontrada com o ID: " + id);
         }
-        return null;
     }
 
     public List<Conta> obterContasPorFiltro(LocalDate dataVencimento, String descricao) {
@@ -69,9 +70,9 @@ public class ContaService {
     }
 
     public Conta obterContaPorId(Long id) {
-        return contaRepository.findById(id).orElse(null);
+        Optional<Conta> optionalConta = contaRepository.findById(id);
+        return optionalConta.orElseThrow(() -> new ContaNaoEncontradaException("Conta não encontrada com o ID: " + id));
     }
-
     public BigDecimal obterValorTotalPagoPorPeriodo(LocalDate dataInicio, LocalDate dataFim) {
         BigDecimal valorTotalPago = BigDecimal.ZERO;
 
