@@ -22,6 +22,8 @@ import com.minhaempresa.gestaofinancas.gestaofinancas.service.ContaService;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/contas")
@@ -29,14 +31,14 @@ public class ContaController {
 
     private final ContaService contaService;
 
-    @GetMapping("/")
-    public String index() {
-        return "Bem-vindo à sua aplicação de gestão financeira!";
-    }
-
     @Autowired
     public ContaController(ContaService contaService) {
         this.contaService = contaService;
+    }
+
+    @GetMapping("/")
+    public String index() {
+        return "Bem-vindo à sua aplicação de gestão financeira!";
     }
 
     @PostMapping("/cadastrar")
@@ -84,5 +86,33 @@ public class ContaController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao importar contas.");
         }
     }
+
+    @GetMapping("/filtro")
+    public ResponseEntity<Page<Conta>> obterContasPorFiltro(
+            @RequestParam(required = false) LocalDate dataVencimento,
+            @RequestParam(required = false) String descricao,
+            Pageable pageable) {
+        Page<Conta> contas = contaService.obterContasPorFiltro(dataVencimento, descricao, pageable);
+        return ResponseEntity.ok(contas);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Conta> obterContaPorId(@PathVariable Long id) {
+        Conta conta = contaService.obterContaPorId(id);
+        if (conta != null) {
+            return ResponseEntity.ok(conta);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/valor-total-pago")
+    public ResponseEntity<BigDecimal> obterValorTotalPagoPorPeriodo(
+            @RequestParam LocalDate dataInicio,
+            @RequestParam LocalDate dataFim) {
+        BigDecimal valorTotalPago = contaService.obterValorTotalPagoPorPeriodo(dataInicio, dataFim);
+        return ResponseEntity.ok(valorTotalPago);
+    }
+
 
 }
