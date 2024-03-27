@@ -1,4 +1,4 @@
-package com.minhaempresa.gestaofinancas.domain.model;
+package com.minhaempresa.gestaofinancas.gestaofinancas.domain.model;
 
 public enum SituacaoConta {
 

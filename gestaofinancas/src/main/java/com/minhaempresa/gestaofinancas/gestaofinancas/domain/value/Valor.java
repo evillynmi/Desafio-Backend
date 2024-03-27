@@ -1,4 +1,4 @@
-package com.minhaempresa.gestaofinancas.domain.value;
+package com.minhaempresa.gestaofinancas.gestaofinancas.domain.value;
 
 import java.math.BigDecimal;
 

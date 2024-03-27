@@ -1,4 +1,4 @@
-package com.minhaempresa.gestaofinancas.config;
+package com.minhaempresa.gestaofinancas.gestaofinancas.config;
 
 import javax.sql.DataSource;
 

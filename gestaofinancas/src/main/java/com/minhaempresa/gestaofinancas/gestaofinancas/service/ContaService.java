@@ -1,4 +1,4 @@
-package com.minhaempresa.gestaofinancas.service;
+package com.minhaempresa.gestaofinancas.gestaofinancas.service;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -9,12 +9,14 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.minhaempresa.gestaofinancas.domain.model.Conta;
-import com.minhaempresa.gestaofinancas.domain.model.SituacaoConta;
-import com.minhaempresa.gestaofinancas.dto.ContaDTO;
-import com.minhaempresa.gestaofinancas.repository.ContaRepository;
+import com.minhaempresa.gestaofinancas.gestaofinancas.domain.model.Conta;
+import com.minhaempresa.gestaofinancas.gestaofinancas.domain.model.SituacaoConta;
+import com.minhaempresa.gestaofinancas.gestaofinancas.dto.ContaDTO;
+import com.minhaempresa.gestaofinancas.gestaofinancas.repository.ContaRepository;
 
 @Service
 public class ContaService {
@@ -64,7 +66,7 @@ public class ContaService {
         return null;
     }
 
-    public List<Conta> obterContasPorFiltro(String dataVencimento, String descricao) {
+    public List<Conta> obterContasPorFiltro(LocalDate dataVencimento, String descricao) {
         return contaRepository.findByDataVencimentoAndDescricao(dataVencimento, descricao);
     }
 
@@ -104,10 +106,15 @@ public class ContaService {
                 conta.setSituacao(situacao);
 
                 contaRepository.save(conta);
+
             }
         } catch (IOException e) {
             e.printStackTrace();
 
         }
+    }
+
+    public Page<Conta> getContas(Pageable pageable) {
+        return contaRepository.findAll(pageable);
     }
 }

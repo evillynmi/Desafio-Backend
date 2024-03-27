@@ -1,9 +1,9 @@
-package com.minhaempresa.gestaofinancas.dto;
+package com.minhaempresa.gestaofinancas.gestaofinancas.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import com.minhaempresa.gestaofinancas.domain.model.SituacaoConta;
+import com.minhaempresa.gestaofinancas.gestaofinancas.domain.model.SituacaoConta;
 
 public class ContaDTO {
 

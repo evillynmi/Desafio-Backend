@@ -1,8 +1,11 @@
-package com.minhaempresa.gestaofinancas.controller;
+package com.minhaempresa.gestaofinancas.gestaofinancas.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,16 +15,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.minhaempresa.gestaofinancas.domain.model.Conta;
-import com.minhaempresa.gestaofinancas.domain.model.SituacaoConta;
-import com.minhaempresa.gestaofinancas.dto.ContaDTO;
-import com.minhaempresa.gestaofinancas.service.ContaService;
+import com.minhaempresa.gestaofinancas.gestaofinancas.domain.model.Conta;
+import com.minhaempresa.gestaofinancas.gestaofinancas.domain.model.SituacaoConta;
+import com.minhaempresa.gestaofinancas.gestaofinancas.dto.ContaDTO;
+import com.minhaempresa.gestaofinancas.gestaofinancas.service.ContaService;
 
 @RestController
 @RequestMapping("/contas")
 public class ContaController {
 
     private final ContaService contaService;
+
+    @GetMapping("/")
+    public String index() {
+        return "Bem-vindo à sua aplicação de gestão financeira!";
+    }
 
     @Autowired
     public ContaController(ContaService contaService) {
@@ -51,6 +59,11 @@ public class ContaController {
             return ResponseEntity.ok(contaAtualizada);
         }
         return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping
+    public Page<Conta> getContas(Pageable pageable) {
+        return contaService.getContas(pageable);
     }
 
 }
