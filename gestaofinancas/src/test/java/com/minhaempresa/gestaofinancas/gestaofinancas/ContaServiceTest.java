@@ -147,7 +147,7 @@ public class ContaServiceTest {
 
         Page<Conta> contasPage = new PageImpl<>(contasEsperadas);
 
-        when(contaRepository.findByDataVencimentoAndDescricao(eq(dataVencimento), eq(descricao)))
+        when(contaRepository.findByDataVencimentoAndDescricao(eq(dataVencimento), eq(descricao), Pageable.unpaged()))
                 .thenReturn(contasPage);
 
         ContaService contaService = new ContaService(contaRepository);
@@ -156,7 +156,7 @@ public class ContaServiceTest {
 
         assertEquals(contasEsperadas, contasRetornadas.getContent());
 
-        verify(contaRepository, times(1)).findByDataVencimentoAndDescricao(eq(dataVencimento), eq(descricao));
+        verify(contaRepository, times(1)).findByDataVencimentoAndDescricao(eq(dataVencimento), eq(descricao),Pageable.unpaged());
     }
 
 
@@ -169,7 +169,6 @@ public class ContaServiceTest {
 
     @Test
     public void testObterValorTotalPagoPorPeriodo() {
-
         LocalDate dataInicio = LocalDate.of(2024, 1, 1);
         LocalDate dataFim = LocalDate.of(2024, 1, 31);
 
@@ -180,9 +179,9 @@ public class ContaServiceTest {
         conta2.setValor(new BigDecimal("200.00"));
 
         Pageable pageable = PageRequest.of(0, 10);
-        Page<Conta> page = new PageImpl<>(Arrays.asList(conta1, conta2));
+        Page<Conta> page = new PageImpl<>(Arrays.asList(conta1, conta2), pageable, 2);
 
-        when(contaRepository.findByDataPagamentoBetween(dataInicio, dataFim)).thenReturn(page);
+        when(contaRepository.findByDataPagamentoBetween(dataInicio, dataFim, pageable)).thenReturn(page);
 
         BigDecimal valorTotal = contaService.obterValorTotalPagoPorPeriodo(dataInicio, dataFim);
 

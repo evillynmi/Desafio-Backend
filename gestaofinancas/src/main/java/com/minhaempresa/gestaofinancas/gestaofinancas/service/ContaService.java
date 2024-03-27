@@ -9,6 +9,7 @@ import java.util.Optional;
 import com.minhaempresa.gestaofinancas.gestaofinancas.exception.ContaNaoEncontradaException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -66,7 +67,7 @@ public class ContaService {
     }
 
     public Page<Conta> obterContasPorFiltro(LocalDate dataVencimento, String descricao, Pageable pageable) {
-        return contaRepository.findByDataVencimentoAndDescricao(dataVencimento, descricao);
+        return contaRepository.findByDataVencimentoAndDescricao(dataVencimento, descricao, pageable);
     }
 
     public Conta obterContaPorId(Long id) {
@@ -76,7 +77,8 @@ public class ContaService {
     public BigDecimal obterValorTotalPagoPorPeriodo(LocalDate dataInicio, LocalDate dataFim) {
         BigDecimal valorTotalPago = BigDecimal.ZERO;
 
-        Page<Conta> contasPagas = contaRepository.findByDataPagamentoBetween(dataInicio, dataFim);
+        Pageable pageable = PageRequest.of(0, 10); // Página 0, com 10 elementos por página (apenas um exemplo)
+        Page<Conta> contasPagas = contaRepository.findByDataPagamentoBetween(dataInicio, dataFim, pageable);
 
         for (Conta conta : contasPagas) {
             valorTotalPago = valorTotalPago.add(conta.getValor());

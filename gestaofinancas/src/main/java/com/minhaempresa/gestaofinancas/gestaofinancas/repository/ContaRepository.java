@@ -1,24 +1,18 @@
 package com.minhaempresa.gestaofinancas.gestaofinancas.repository;
 
-import java.time.LocalDate;
-import java.util.List;
-
+import com.minhaempresa.gestaofinancas.gestaofinancas.domain.model.Conta;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.minhaempresa.gestaofinancas.gestaofinancas.domain.model.Conta;
+import java.time.LocalDate;
 
 @Repository
 public interface ContaRepository extends JpaRepository<Conta, Long> {
 
-    Page<Conta> findByDataVencimentoAndDescricao(LocalDate dataVencimento, String descricao);
+    Page<Conta> findByDataVencimentoAndDescricao(LocalDate dataVencimento, String descricao, Pageable pageable);
 
-    Page<Conta> findByDataPagamentoBetween(LocalDate dataInicio, LocalDate dataFim);
-
-    // @SuppressWarnings("unchecked")
-    // Conta save(Conta conta);
-
-    // Optional<Conta> findById(Long id);
+    Page<Conta> findByDataPagamentoBetween(LocalDate dataInicio, LocalDate dataFim, Pageable pageable);
 
 }
