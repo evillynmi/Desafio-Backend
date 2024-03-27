@@ -65,7 +65,7 @@ public class ContaService {
         }
     }
 
-    public List<Conta> obterContasPorFiltro(LocalDate dataVencimento, String descricao) {
+    public Page<Conta> obterContasPorFiltro(LocalDate dataVencimento, String descricao, Pageable pageable) {
         return contaRepository.findByDataVencimentoAndDescricao(dataVencimento, descricao);
     }
 
@@ -76,7 +76,7 @@ public class ContaService {
     public BigDecimal obterValorTotalPagoPorPeriodo(LocalDate dataInicio, LocalDate dataFim) {
         BigDecimal valorTotalPago = BigDecimal.ZERO;
 
-        List<Conta> contasPagas = contaRepository.findByDataPagamentoBetween(dataInicio, dataFim);
+        Page<Conta> contasPagas = contaRepository.findByDataPagamentoBetween(dataInicio, dataFim);
 
         for (Conta conta : contasPagas) {
             valorTotalPago = valorTotalPago.add(conta.getValor());

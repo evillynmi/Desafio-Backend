@@ -28,6 +28,7 @@ import com.minhaempresa.gestaofinancas.gestaofinancas.repository.ContaRepository
 import com.minhaempresa.gestaofinancas.gestaofinancas.service.ContaService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 @ExtendWith(MockitoExtension.class)
@@ -132,19 +133,32 @@ public class ContaServiceTest {
 
         LocalDate dataVencimento = LocalDate.of(2024, 3, 25);
         String descricao = "Conta de teste";
-        List<Conta> contasEsperadas = new ArrayList<>();
-        contasEsperadas.add(new Conta(/* preencher os dados da conta de teste */));
 
-        when(contaRepository.findByDataVencimentoAndDescricao(dataVencimento, descricao))
-                .thenReturn(contasEsperadas);
+        Conta contaTeste = new Conta();
+        contaTeste.setId(1L);
+        contaTeste.setDataVencimento(dataVencimento);
+        contaTeste.setDataPagamento(dataVencimento.plusDays(1));
+        contaTeste.setValor(BigDecimal.valueOf(100.00));
+        contaTeste.setDescricao(descricao);
+        contaTeste.setSituacao(SituacaoConta.PENDENTE);
+
+        List<Conta> contasEsperadas = new ArrayList<>();
+        contasEsperadas.add(contaTeste);
+
+        Page<Conta> contasPage = new PageImpl<>(contasEsperadas);
+
+        when(contaRepository.findByDataVencimentoAndDescricao(eq(dataVencimento), eq(descricao)))
+                .thenReturn(contasPage);
 
         ContaService contaService = new ContaService(contaRepository);
 
-        List<Conta> contasRetornadas = contaService.obterContasPorFiltro(dataVencimento, descricao);
+        Page<Conta> contasRetornadas = contaService.obterContasPorFiltro(dataVencimento, descricao, Pageable.unpaged());
 
-        assertEquals(contasEsperadas, contasRetornadas);
-        verify(contaRepository, times(1)).findByDataVencimentoAndDescricao(dataVencimento, descricao);
+        assertEquals(contasEsperadas, contasRetornadas.getContent());
+
+        verify(contaRepository, times(1)).findByDataVencimentoAndDescricao(eq(dataVencimento), eq(descricao));
     }
+
 
     @Test
     public void TestObterContaPorId() {
@@ -165,9 +179,10 @@ public class ContaServiceTest {
         Conta conta2 = new Conta();
         conta2.setValor(new BigDecimal("200.00"));
 
-        List<Conta> contasPagas = Arrays.asList(conta1, conta2);
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Conta> page = new PageImpl<>(Arrays.asList(conta1, conta2));
 
-        when(contaRepository.findByDataPagamentoBetween(dataInicio, dataFim)).thenReturn(contasPagas);
+        when(contaRepository.findByDataPagamentoBetween(dataInicio, dataFim)).thenReturn(page);
 
         BigDecimal valorTotal = contaService.obterValorTotalPagoPorPeriodo(dataInicio, dataFim);
 
