@@ -1,8 +1,6 @@
 package com.minhaempresa.gestaofinancas.gestaofinancas.service;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
@@ -86,8 +84,8 @@ public class ContaService {
         return valorTotalPago;
     }
 
-    public void importarContasViaCSV(String caminhoArquivo) {
-        try (BufferedReader reader = new BufferedReader(new FileReader(caminhoArquivo))) {
+    public void importarContasViaCSV(InputStream inputStream) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
             String linha;
             while ((linha = reader.readLine()) != null) {
                 String[] dadosConta = linha.split(",");
@@ -106,11 +104,9 @@ public class ContaService {
                 conta.setSituacao(situacao);
 
                 contaRepository.save(conta);
-
             }
         } catch (IOException e) {
             e.printStackTrace();
-
         }
     }
 

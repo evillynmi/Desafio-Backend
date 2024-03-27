@@ -19,6 +19,9 @@ import com.minhaempresa.gestaofinancas.gestaofinancas.domain.model.Conta;
 import com.minhaempresa.gestaofinancas.gestaofinancas.domain.model.SituacaoConta;
 import com.minhaempresa.gestaofinancas.gestaofinancas.dto.ContaDTO;
 import com.minhaempresa.gestaofinancas.gestaofinancas.service.ContaService;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/contas")
@@ -64,6 +67,22 @@ public class ContaController {
     @GetMapping("/lista")
     public Page<Conta> getContas(Pageable pageable) {
         return contaService.getContas(pageable);
+    }
+
+
+    @PostMapping("/importar-contas")
+    public ResponseEntity<String> importarContasViaCSV(@RequestParam("file") MultipartFile file) {
+        if (file.isEmpty()) {
+            return ResponseEntity.badRequest().body("O arquivo está vazio.");
+        }
+
+        try {
+            contaService.importarContasViaCSV(file.getInputStream());
+            return ResponseEntity.status(HttpStatus.CREATED).body("Contas importadas com sucesso.");
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao importar contas.");
+        }
     }
 
 }
